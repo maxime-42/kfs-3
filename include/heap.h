@@ -14,12 +14,18 @@
 #define HEAP_TABLE_ADDRESS 0x00007E00 
 #define HEAP_TOTAL_ENTRIES HEAP_SIZE_BYTES / HEAP_BLOCK_SIZE
 
-typedef struct	heap_table
+typedef struct	s_heap_table
 {
-    uint8 *		entries;
+    uint8 *	  table;
     size_t		total;
-}				s_heap;
+}				t_heap_table;
 
-int heap_create(void* ptr, void* end, struct heap_table* table);
+int heap_create(void* ptr, void* end, t_heap_table* table);
+void* kmalloc(size_t size);
+void* heap_malloc(t_heap_table* heap, size_t size);
+void kheap_init();
+void heap_free(t_heap_table * heap_instance, void* ptr);
+void kfree(void* ptr);
+void* kzalloc(size_t size);
 
 #endif // DEBUG

@@ -85,3 +85,4 @@ qemu-no-iso:
 	@qemu-system-i386 -kernel ${KERNEL_OUT}  -enable-kvm   -serial file:$(LOG_FILE)
 
 # .PHONY: all build fclean clean qemu qemu-no-iso
+re: fclean all
