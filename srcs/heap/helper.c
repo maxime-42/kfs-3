@@ -69,7 +69,7 @@ int heap_get_start_block(t_heap_table * heap_instance, uint32 total_blocks)
     // (int) total_blocks;
     for (size_t i = 0; i < heap_instance->total; i++)
     {
-		// printk("i = %d\n");
+		// //printk("i = %d\n");
         if (heap_get_entry_type(heap_instance->table[i]) != HEAP_BLOCK_TABLE_ENTRY_FREE)
         {
             bc = 0;
@@ -93,8 +93,8 @@ int heap_get_start_block(t_heap_table * heap_instance, uint32 total_blocks)
     {
         return ERROR;
     }
-	printk("block start: %d\n", bs);
-	printk("block counter: %d\n", bc);
+	//printk("block start: %d\n", bs);
+	//printk("block counter: %d\n", bc);
     return bs;
 }
 
@@ -135,7 +135,7 @@ static void* heap_malloc_blocks(t_heap_table * heap_instance, uint32 total_block
     void* address = 0;
 
     int start_block = heap_get_start_block(heap_instance, total_blocks);
-    // printk("start block : %d\n", start_block);
+    // //printk("start block : %d\n", start_block);
 	if (start_block < 0)
     {
         return NULL;
@@ -154,14 +154,15 @@ static void* heap_malloc_blocks(t_heap_table * heap_instance, uint32 total_block
 */
 void heap_mark_blocks_free(t_heap_table * heap_instance, int starting_block)
 {
+
     // t_8 * table = heap_insheap_instancee->table;
     for (int i = starting_block; i < (int)heap_instance->total; i++)
     {
         uint8 entry = heap_instance->table[i];
-        printk("the block1  ===>>> %d\n", heap_instance->table[i]);
+        //printk("the block1  ===>>> %d\n", heap_instance->table[i]);
      
         heap_instance->table[i] = HEAP_BLOCK_TABLE_ENTRY_FREE;
-        printk("the block2  ===>>> %d", heap_instance->table[i]);
+        //printk("the block2  ===>>> %d", heap_instance->table[i]);
         if (!(entry & HEAP_BLOCK_HAS_NEXT))
         {
             break;
@@ -181,13 +182,14 @@ int heap_address_to_block( t_heap_table * heap_instance, void* address_to_find)
     // return ((int)(address_to_find -  start) / HEAP_BLOCK_SIZE);
     // return ((int)(address_to_find -  start) / HEAP_BLOCK_SIZE);
 	return  (address_to_find - (void *)heap_instance->table) / HEAP_BLOCK_SIZE;
+	(void)start;
 	
 }
 
 void heap_free(t_heap_table * heap_instance, void* ptr)
 {
     int starting_block = heap_address_to_block(heap_instance, ptr);
-    printk("starting block =====>>> %d", starting_block);
+    //printk("starting block =====>>> %d", starting_block);
     heap_mark_blocks_free(heap_instance, starting_block);
 }
 
@@ -196,12 +198,12 @@ void heap_free(t_heap_table * heap_instance, void* ptr)
 void* heap_malloc(t_heap_table * heap_instance, size_t size)
 {
     size_t nbr_bytes = get_size_of_mem_alloc(size);
-	printk("nbr_bytes = %d\n", nbr_bytes);
+	//printk("nbr_bytes = %d\n", nbr_bytes);
     uint32 nbr_blocks = nbr_bytes / HEAP_BLOCK_SIZE;
-	printk("nbr_blocks = %d\n", nbr_blocks);
+	//printk("nbr_blocks = %d\n", nbr_blocks);
 	void *address = heap_malloc_blocks(heap_instance, nbr_blocks);
-	printk("address block: %d\n", (uint32 )address);
-	printk("____________________________\n");
+	//printk("address block: %d\n", (uint32 )address);
+	//printk("____________________________\n");
     return address;
 }
 

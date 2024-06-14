@@ -1,11 +1,12 @@
 #include "heap.h"
 #include "config.h"
 #include "libk.h"
+#include "paging.h"
 // #include "config.h"
 // #include "libk.h"
 // #include "../../include/heap.h"
 static t_heap_table heap_instance;
-
+// #include "malloc.h"
 
 /*
  * Function: kheap_init()
@@ -19,6 +20,7 @@ void kheap_init()
 {
     heap_instance.table = (uint8 *)(HEAP_TABLE_ADDRESS);
     heap_instance.total = HEAP_TOTAL_ENTRIES;
+	heap_instance.table = (unsigned char *)allocate_blocks(HEAP_TOTAL_ENTRIES);
 
     void* end = (void*)(HEAP_ADDRESS + HEAP_SIZE_BYTES);
     int res = heap_create((void *)(HEAP_ADDRESS), end, &heap_instance);
@@ -46,4 +48,10 @@ void* kmalloc(size_t size)
 void kfree(void* ptr)
 {
     heap_free(&heap_instance, ptr);
+}
+
+void kfreeSize(void* ptr, size_t size)
+{
+    heap_free(&heap_instance, ptr);
+    
 }

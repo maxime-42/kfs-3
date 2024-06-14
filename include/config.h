@@ -20,10 +20,29 @@
 #define		IRQ1	33
 #define 	DECIMAL 10
 #define 	HEX_BASE 16
-
+#define   GETPAGESIZE 4096
 typedef unsigned char		uint8;
 typedef unsigned short		uint16;
 typedef unsigned int		uint32;
+typedef int					int32;
+typedef unsigned long long	uint64;
+
+
+typedef uint32 pt_entry;  // Page table entry
+typedef uint32 pd_entry;  // Page directory entry
+typedef uint32 physical_address; 
+typedef uint32 virtual_address; 
+
+
+#define	TRUE 1
+#define	FALSE 0
+#define MEMMAP_AREA 0x30000
+#define KERNEL_ADDRESS 0x100000 // 1MB
+#define SMAP_NUMBER_ADDRESS 0x8004
+#define SMAP_ENTRIES_ADDRESS 0x8000
+#define CURRENT_PAGE_DIR_ADDRESS 0x1800
+#define PHYS_MEM_MAX_BLOCKS 0x1804
+#define PHYS_MEM_USED_BLOCKS 0x1808
 
 /*##############################################*/
 #define INTERRUPT_MASK_ALL 0x00
