@@ -44,6 +44,13 @@ void unset_block(const uint32 bit)
 //}
 
 // Find the first free blocks of memory for a given size
+/*
+* @describe:searches for the first available contiguous block of memory of a specified size. 
+*  It checks a bitmap (represented by memory_map) where each bit represents a block of memory. 
+* The function aims to find a sequence of num_blocks contiguous free blocks.
+*  @param size: The number of blocks to find
+*  @return: If no suitable free region is found after checking the entire bitmap, return -1, 
+*/
 int32 find_first_free_blocks(const uint32 num_blocks)
 {
     if (num_blocks == 0) return -1; // Can't return no memory, error
@@ -78,6 +85,7 @@ int32 find_first_free_blocks(const uint32 num_blocks)
     return -1;  // No free region of memory large enough
 }
 
+//step one:
 // Initialize memory manager, given an address and size to put the memory map
 void initialize_memory_manager(const uint32 start_address, const uint32 size)
 {
@@ -118,6 +126,15 @@ void deinitialize_memory_region(const uint32 base_address, const uint32 size)
     }
 }
 
+static void	page_fault()
+{
+	// Page fault handler
+  
+	printk("Page Fault\n");
+	kpanic();
+
+}
+
 // Allocate blocks of memory
 uint32 *allocate_blocks(const uint32 num_blocks)
 {
@@ -125,8 +142,12 @@ uint32 *allocate_blocks(const uint32 num_blocks)
     if ((max_blocks - used_blocks) <= num_blocks) return 0;   
 
     int32 starting_block = find_first_free_blocks(num_blocks);
-    if (starting_block == -1) return 0;     // Couldn't find that many blocks in a row to allocate
-
+    if (starting_block == -1) // Couldn't find that many blocks in a row to allocate
+	{
+		// Couldn't find that many blocks in a row to allocate
+		page_fault();
+		return 0;
+	}
     // Found free blocks, set them as used
     for (uint32 i = 0; i < num_blocks; i++)
         set_block(starting_block + i);
@@ -144,7 +165,7 @@ void free_blocks(const uint32 *address, const uint32 num_blocks)
 {
     int32 starting_block = (uint32)address / BLOCK_SIZE;   // Convert address to blocks 
 
-    for (uint32 i = 0; i < num_blocks; i++) 
+    for (uint32 i = 0; i < num_blocks; i++)
         unset_block(starting_block + i);    // Unset bits/blocks in memory map, to free
 
     used_blocks -= num_blocks;  // Decrease used block count
