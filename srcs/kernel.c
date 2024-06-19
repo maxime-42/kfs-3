@@ -78,7 +78,7 @@ void	kmain()
 	init_gdt();
 
 	init_idt();
-	  initialize_memory_region(placement_address, 0x1002000);
+	initialize_memory_region(placement_address, 0x1002000);
 	initialize_virtual_memory_manager();// test_div();
 	// printk("hello world\n");
 	// set_string();
@@ -94,15 +94,15 @@ void	kmain()
 	// prekernel_main();
 
 	kheap_init();
-	testeur();
+	// testeur();
 	// printk("====>>> start test heap\n");
-	// void * ptr1;
-	// for (size_t i = 0; i < 4; i++)
-	// {
-	// 	ptr1 = kmalloc(2);
-	// 	printk("======>>>> ptr1 : %p\n", ptr1);
-	// }
-	
+	void * ptr1;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ptr1 = kmalloc(2);
+		printk("======>>>> ptr1 : %p\n", ptr1);
+	}
+	allocate_blocks(1);
 	// printk("======>>>>ptr1 : %p\n", ptr1);
 	// // // void * ptr3 = kmalloc(20);
 	// // // void * ptr4 = kmalloc(30);

@@ -6,7 +6,6 @@
 // #include "libk.h"
 // #include "../../include/heap.h"
 static t_heap_table heap_instance;
-// #include "malloc.h"
 
 /*
  * Function: kheap_init()
@@ -41,6 +40,7 @@ void kheap_init()
  */
 void* kmalloc(size_t size)
 {
+	if (heap_instance.table == 0) return 0; 
 	return heap_malloc(&heap_instance, size);
 }
 
@@ -53,5 +53,6 @@ void kfree(void* ptr)
 void kfreeSize(void* ptr, size_t size)
 {
     heap_free(&heap_instance, ptr);
+	(void)size;
     
 }

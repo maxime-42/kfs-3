@@ -113,14 +113,14 @@ extern t_memory_zones          g_zones;
 // extern pthread_mutex_t  g_mutex;
 
 void            *ft_malloc(size_t size);
-void            *malloc(size_t size);
+void            *vmalloc(size_t size);
 
 void            *ft_realloc(void *ptr, size_t size);
 // void            *reallocf(void *ptr, size_t size);
 void            *realloc(void *ptr, size_t size);
 
 void            ft_free(void *ptr);
-void            free(void *ptr);
+void            vfree(void *ptr);
 
 void            show_alloc_mem();
 void            show_alloc_mem_ex();
@@ -132,5 +132,8 @@ t_meta_block*    search_in_zone(void *ptr, t_zone_type zone_type);
 t_vm_page*         search_in_large_zone(void *ptr);
 void* kmalloc(size_t size);
 
-void print_base(unsigned int number, unsigned short base);
+// void print_base(unsigned int number, unsigned short base);
+uint64_t ksize(void * ptr);
+uint64_t vsize(void * ptr);
+
 #endif

@@ -5,15 +5,23 @@
 #include "config.h"
 #include "paging.h"
 #include "libk.h"
+#include "heap.h"
 
 #define BLOCK_SIZE      4096     // Size of 1 block of memory, 4KB
 #define BLOCKS_PER_BYTE 8        // Using a bitmap, each byte will hold 8 bits/blocks
+
+typedef struct s_info_addr
+{
+	uint32 addr;
+	uint32 size;
+}			t_info_addr;
 
 // Global variables
 static uint32 *memory_map = 0;
 static uint32 max_blocks  = 0;
 static uint32 used_blocks = 0;
-
+static t_info_addr info_addr[1023];
+static	uint32 count_addr = 0;
 // Sets a block/bit in the memory map (mark block as used)
 void set_block(const uint32 bit)
 {
@@ -87,6 +95,7 @@ void initialize_memory_manager(const uint32 start_address, const uint32 size)
 
     // By default, set all memory in use (used blocks/bits = 1, every block is set)
     // Each byte of memory map holds 8 bits/blocks
+    kmemset(info_addr, 0, 1023);
     kmemset(memory_map, 0xFF, max_blocks / BLOCKS_PER_BYTE);
 }
 
@@ -107,15 +116,50 @@ void initialize_memory_region(const uint32 base_address, const uint32 size)
 }
 
 // De-initialize region of memory (sets blocks as used/reserved)
-void deinitialize_memory_region(const uint32 base_address, const uint32 size)
-{
-    int32 align      = base_address / BLOCK_SIZE;  // Convert memory address to blocks
-    int32 num_blocks = size / BLOCK_SIZE;          // Convert size to blocks
+// void deinitialize_memory_region(const uint32 base_address, const uint32 size)
+// {
+//     int32 align      = base_address / BLOCK_SIZE;  // Convert memory address to blocks
+//     int32 num_blocks = size / BLOCK_SIZE;          // Convert size to blocks
 
-    for (; num_blocks > 0; num_blocks--) {
-        set_block(align++);
-        used_blocks++;
-    }
+//     for (; num_blocks > 0; num_blocks--) {
+//         set_block(align++);
+//         used_blocks++;
+//     }
+// }
+
+
+// void	add_info(uint32 addr, uint32 size)
+// {
+// 	info_addr[count_addr].addr = addr;
+// 	info_addr[count_addr].size = size;
+// 	count_addr++;
+// }
+
+// static void	remove_info(uint32 addr)
+// {
+// 	for (uint32 i = 0; i < count_addr; i++)
+// 	{
+// 		if (info_addr[i].addr == addr)
+// 		{
+// 			info_addr[i].addr = 0;
+// 			info_addr[i].addr = 0;
+// 			count_addr--;
+// 			return;
+// 		}
+// 	}
+	
+// }
+
+uint32	get_size_physical(uint32 addr)
+{
+	for (uint32 i = 0; i < count_addr; i++)
+	{
+		if (info_addr[i].addr == addr)
+		{
+			return info_addr[i].addr;
+		}
+	}
+	return 0;
 }
 
 // Allocate blocks of memory
@@ -135,7 +179,15 @@ uint32 *allocate_blocks(const uint32 num_blocks)
 
     // Convert blocks to bytes to get start of actual RAM that is now allocated
     uint32 address = starting_block * BLOCK_SIZE; 
+	if (kmalloc(8) == 0)
+	{
+		printk("=== Not Null\n");
 
+	}
+	else
+	{
+		printk("==== Null\n");
+	}
     return (uint32 *)address;  // Physical memory location of allocated blocks
 }
 
