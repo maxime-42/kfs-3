@@ -14,5 +14,6 @@ void set_block(const uint32 bit);
 void unset_block(const uint32 bit);
 uint32 *allocate_blocks(const uint32 num_blocks);
 uint32 initialize_virtual_memory_manager(void);
+uint32	get_size_physical(uint32 addr);
 
 #endif

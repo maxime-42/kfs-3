@@ -20,7 +20,6 @@ void kheap_init()
     heap_instance.table = (uint8 *)(HEAP_TABLE_ADDRESS);
     heap_instance.total = HEAP_TOTAL_ENTRIES;
 	heap_instance.table = (unsigned char *)allocate_blocks(HEAP_TOTAL_ENTRIES);
-
     void* end = (void*)(HEAP_ADDRESS + HEAP_SIZE_BYTES);
     int res = heap_create((void *)(HEAP_ADDRESS), end, &heap_instance);
     if (res < 0)
@@ -40,7 +39,6 @@ void kheap_init()
  */
 void* kmalloc(size_t size)
 {
-	if (heap_instance.table == 0) return 0; 
 	return heap_malloc(&heap_instance, size);
 }
 

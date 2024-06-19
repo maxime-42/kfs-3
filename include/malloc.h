@@ -11,6 +11,7 @@
 #include "config.h"
 #include "libk.h"
 #include "heap.h"
+#include "paging.h"
 #define TINY_MIN 32
 #define SMALL_MIN 144
 #define TINY_MAX SMALL_MIN - 1
@@ -131,6 +132,7 @@ size_t          get_alligned_size(size_t size);
 t_meta_block*    search_in_zone(void *ptr, t_zone_type zone_type);
 t_vm_page*         search_in_large_zone(void *ptr);
 void* kmalloc(size_t size);
+int new_get_size(void * ptr);
 
 // void print_base(unsigned int number, unsigned short base);
 uint64_t ksize(void * ptr);

@@ -60,6 +60,8 @@ void	set_function();
 void	set_string();
 extern 	void test_syscalls();
 int testeur();
+int testeur1();
+int testeur2();
 
 // void print_char_with_asm(char *ptr);
 

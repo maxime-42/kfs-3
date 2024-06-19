@@ -51,11 +51,18 @@ void unset_block(const uint32 bit)
  //   return memory_map[bit/32] & (1 << (bit % 32));
 //}
 
+void print_map(uint32 *memory_map){
+    for (uint32 i=0; i<max_blocks / 32; i++){
+        printk("map_memory[%d]: %s\n", i ,memory_map[i]);
+    }
+}
+
 // Find the first free blocks of memory for a given size
 int32 find_first_free_blocks(const uint32 num_blocks)
 {
-    if (num_blocks == 0) return -1; // Can't return no memory, error
-
+    if (num_blocks == 0){
+        return -1;
+    }  // Can't return no memory, error
     // Test 32 blocks at a time
     for (uint32 i = 0; i < max_blocks / 32;  i++) {
         if (memory_map[i] != 0xFFFFFFFF) {
@@ -82,13 +89,14 @@ int32 find_first_free_blocks(const uint32 num_blocks)
             }
         }
     }
-
+    
     return -1;  // No free region of memory large enough
 }
 
 // Initialize memory manager, given an address and size to put the memory map
 void initialize_memory_manager(const uint32 start_address, const uint32 size)
 {
+    // printk("========\n");
     memory_map = (uint32 *)start_address;
     max_blocks  = size / BLOCK_SIZE;
     used_blocks = max_blocks;       // To start off, every block will be "used/reserved"
@@ -96,12 +104,16 @@ void initialize_memory_manager(const uint32 start_address, const uint32 size)
     // By default, set all memory in use (used blocks/bits = 1, every block is set)
     // Each byte of memory map holds 8 bits/blocks
     kmemset(info_addr, 0, 1023);
+    // kmemset(memory_map, 0, max_blocks / BLOCKS_PER_BYTE);
     kmemset(memory_map, 0xFF, max_blocks / BLOCKS_PER_BYTE);
+    // print_map(memory_map);
 }
 
 // Initialize region of memory (sets blocks as free/available)
 void initialize_memory_region(const uint32 base_address, const uint32 size)
 {
+	// initialize_memory_manager(base_address, size);
+
     int32 align      = base_address / BLOCK_SIZE;  // Convert memory address to blocks
     int32 num_blocks = size / BLOCK_SIZE;          // Convert size to blocks
 
@@ -128,27 +140,29 @@ void initialize_memory_region(const uint32 base_address, const uint32 size)
 // }
 
 
-// void	add_info(uint32 addr, uint32 size)
-// {
-// 	info_addr[count_addr].addr = addr;
-// 	info_addr[count_addr].size = size;
-// 	count_addr++;
-// }
+void	add_info(uint32 addr, uint32 size)
+{
+	printk("ft_addres : %d\n", addr);
+	printk("ft_size : %d\n", size);
+	info_addr[count_addr].addr = addr;
+	info_addr[count_addr].size = size;
+	count_addr++;
+}
 
-// static void	remove_info(uint32 addr)
-// {
-// 	for (uint32 i = 0; i < count_addr; i++)
-// 	{
-// 		if (info_addr[i].addr == addr)
-// 		{
-// 			info_addr[i].addr = 0;
-// 			info_addr[i].addr = 0;
-// 			count_addr--;
-// 			return;
-// 		}
-// 	}
+void	remove_info(uint32 addr)
+{
+	for (uint32 i = 0; i < count_addr; i++)
+	{
+		if (info_addr[i].addr == addr)
+		{
+			info_addr[i].addr = 0;
+			info_addr[i].addr = 0;
+			count_addr--;
+			return;
+		}
+	}
 	
-// }
+}
 
 uint32	get_size_physical(uint32 addr)
 {
@@ -156,7 +170,9 @@ uint32	get_size_physical(uint32 addr)
 	{
 		if (info_addr[i].addr == addr)
 		{
-			return info_addr[i].addr;
+			printk("addr = %d\n", addr);
+			printk("size = %d\n", info_addr[i].size );
+			return info_addr[i].size ;
 		}
 	}
 	return 0;
@@ -166,11 +182,17 @@ uint32	get_size_physical(uint32 addr)
 uint32 *allocate_blocks(const uint32 num_blocks)
 {
     // If # of free blocks left is not enough, we can't allocate any more, return
-    if ((max_blocks - used_blocks) <= num_blocks) return 0;   
+    if ((max_blocks - used_blocks) <= num_blocks) return 0;
 
     int32 starting_block = find_first_free_blocks(num_blocks);
-    if (starting_block == -1) return 0;     // Couldn't find that many blocks in a row to allocate
 
+	// add_info(starting_block * BLOCK_SIZE, num_blocks / BLOCK_SIZE);
+
+    if (starting_block == -1){
+		//printk("no paging find\n");
+		return 0;     // Couldn't find that many blocks in a row to allocate
+
+	} 
     // Found free blocks, set them as used
     for (uint32 i = 0; i < num_blocks; i++)
         set_block(starting_block + i);
@@ -179,15 +201,15 @@ uint32 *allocate_blocks(const uint32 num_blocks)
 
     // Convert blocks to bytes to get start of actual RAM that is now allocated
     uint32 address = starting_block * BLOCK_SIZE; 
-	if (kmalloc(8) == 0)
-	{
-		printk("=== Not Null\n");
+	// add_info(address, num_blocks / BLOCK_SIZE);
+	info_addr[count_addr].addr = address;
+	info_addr[count_addr].size = (num_blocks / BLOCK_SIZE) + 1;
+	// info_addr[count_addr].size = 51;
+	// printk("test = %d\n", info_addr[count_addr].size);
+	// printk("addrr = %d\n", info_addr[count_addr].addr);
+	get_size_physical(address);
+	count_addr++;
 
-	}
-	else
-	{
-		printk("==== Null\n");
-	}
     return (uint32 *)address;  // Physical memory location of allocated blocks
 }
 
@@ -198,7 +220,7 @@ void free_blocks(const uint32 *address, const uint32 num_blocks)
 
     for (uint32 i = 0; i < num_blocks; i++) 
         unset_block(starting_block + i);    // Unset bits/blocks in memory map, to free
-
+	// remove_info(address);
     used_blocks -= num_blocks;  // Decrease used block count
 }
 

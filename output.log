@@ -1,0 +1,5 @@
+ ===>>> before free addr = 01234 
+vsize = 292
+ksize = 4096
+ ===>>> after free addr = 01234 
+

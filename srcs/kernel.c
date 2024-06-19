@@ -69,7 +69,8 @@ void * test_alloc(size_t size){
     return kmalloc(size);
 }
 
-
+// #define MEMSIZE 0x1002000
+// #define MEMSIZE 0x735772
 void	kmain()
 {
 	// prekernel_main();
@@ -94,15 +95,33 @@ void	kmain()
 	// prekernel_main();
 
 	kheap_init();
-	// testeur();
+	char * test_a;
+	test_a = kmalloc(5000);
+	(void) test_a;
+	testeur();
+	// testeur1();
+	// testeur2();
+	// test_b = kmalloc(10);
+	// printk("before free test_a = %p\n", test_a);
+	// printk("before free test_b = %p\n", test_b);
+	// kfree(test_b);
+	// kfree(test_a);
+	// test_b = kmalloc(10);
+	// printk("after free test_a = %p\n", test_a);
+	// printk("after free test_b = %p\n", test_b);
+
+	// (void)test_a;
+  // uint32  *addr = allocate_blocks(3);
+	// printk(" ==>>> %p <<<===\n", addr);
+
 	// printk("====>>> start test heap\n");
-	void * ptr1;
-	for (size_t i = 0; i < 4; i++)
-	{
-		ptr1 = kmalloc(2);
-		printk("======>>>> ptr1 : %p\n", ptr1);
-	}
-	allocate_blocks(1);
+	// void * ptr1;
+	// for (size_t i = 0; i < 4; i++)
+	// {
+	// 	ptr1 = kmalloc(2);
+	// 	printk("======>>>> ptr1 : %p\n", ptr1);
+	// }
+	// allocate_blocks(1);
 	// printk("======>>>>ptr1 : %p\n", ptr1);
 	// // // void * ptr3 = kmalloc(20);
 	// // // void * ptr4 = kmalloc(30);
